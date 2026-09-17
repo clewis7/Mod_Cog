@@ -63,8 +63,11 @@ class EnvWithAdditions(TrialEnv):
             # TODO: Only works for Discrete action_space, make it work for Box
             value = self.action_space.name[where][value]
         if isinstance(period, str):
+          offset = 1 if where is not None else 0
           for t in range(int(self.timing['decision'] / self.dt)):
-              self.gt[self.start_ind['decision'] + t] = np.mod(value +int(seq* t * self.omega * self.dt), self.dim_ring)
+              self.gt[self.start_ind['decision'] + t] = np.mod(
+                  value - offset + int(seq * t * self.omega * self.dt), self.dim_ring
+              ) + offset
 
         elif period is None:
             self.gt[:] = value
