@@ -1,5 +1,5 @@
 import numpy as np
-import gym
+import gymnasium as gym
 import neurogym as ngym
 from neurogym import spaces
 from neurogym.wrappers.block import ScheduleEnvs
@@ -8,7 +8,7 @@ from neurogym.utils.scheduler import SequentialSchedule
 from neurogym.utils.scheduler import RandomSchedule
 from neurogym.wrappers.block import MultiEnvs
 from neurogym.utils import scheduler
-from neurogym.core import TrialWrapper
+from neurogym.core import TrialWrapper, TrialEnv
 import matplotlib.pyplot as plt
 
 def _get_dist(original_dist):
@@ -45,7 +45,7 @@ class _MultiModalityStimulus(TrialWrapper):
     def new_trial(self, **kwargs):
         return self.env.new_trial(**kwargs)
 
-class EnvWithAdditions(ngym.TrialEnv):
+class EnvWithAdditions(TrialEnv):
     """ Wrapper around neurogym's TrialEnv to allow for time varying outputs"""
     def _init_gt(self):
         """Initialize trial with ground_truth."""
@@ -184,7 +184,7 @@ class _Reach(EnvWithAdditions):
                 else:
                     reward += self.rewards['fail']
 
-        return self.ob_now, reward, False, {'new_trial': new_trial, 'gt': gt}
+        return self.ob_now, reward, False, False, {'new_trial': new_trial, 'gt': gt}
 
 #2AFC family
 class _DMFamily(EnvWithAdditions):
@@ -345,7 +345,7 @@ class _DMFamily(EnvWithAdditions):
                 else:
                     reward = self.rewards['fail']
 
-        return ob, reward, False, {'new_trial': new_trial, 'gt': gt}
+        return ob, reward, False, False, {'new_trial': new_trial, 'gt': gt}
 
 class _DelayMatch1DResponse(EnvWithAdditions):
     r"""Delay match-to-sample or category task.
@@ -484,7 +484,7 @@ class _DelayMatch1DResponse(EnvWithAdditions):
                 else:
                     reward = self.rewards['fail']
 
-        return ob, reward, False, {'new_trial': new_trial, 'gt': gt}
+        return ob, reward, False, False, {'new_trial': new_trial, 'gt': gt}
 
 
 #First family of tasks (Go family)
